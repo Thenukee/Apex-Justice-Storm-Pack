@@ -2,9 +2,9 @@
 #include <SoftwareSerial.h>
 #include <AltSoftSerial.h>
 
-#define rxPin 2
-#define txPin 3
-SoftwareSerial sim800L(rxPin,txPin); 
+#define rxPin 2 //sim900a
+#define txPin 3 //sim900a
+SoftwareSerial SIM900A(rxPin,txPin); 
 
 //GPS Module RX pin to Arduino 9
 //GPS Module TX pin to Arduino 8    
@@ -22,10 +22,10 @@ void setup()
   //Begin serial communication with Arduino and Arduino IDE (Serial Monitor)
   Serial.begin(115200);
   
-  //Begin serial communication with Arduino and SIM800L
-  sim800L.begin(9600);
+  //Begin serial communication with Arduino and SIM900A
+  SIM900A.begin(9600);
 
-  //Begin serial communication with Arduino and SIM800L
+  //Begin serial communication with Arduino and SIM900A
   neogps.begin(9600);
 
   Serial.println("Initializing...");
@@ -34,17 +34,17 @@ void setup()
   //Once the handshake test is successful, it will back to OK
   sendATcommand("AT", "OK", 2000);
   sendATcommand("AT+CMGF=1", "OK", 2000);
-  //sim800L.print("AT+CMGR=40\r");
+  //SIM900A.print("AT+CMGR=40\r");
   
 }
 
 void loop()
 {
-  while(sim800L.available()){
-    Serial.println(sim800L.readString());
+  while(SIM900A.available()){
+    Serial.println(SIM900A.readString());
   }
   while(Serial.available())  {
-    sim800L.println(Serial.readString());
+    SIM900A.println(Serial.readString());
   }
 
 
@@ -52,7 +52,8 @@ void loop()
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis > interval) {
        previousMillis = currentMillis;
-       sendGpsToServer();
+       sendGpsToServer();//replace with dataToServer
+       //sendDataToServer();
     }
 }
 
@@ -99,17 +100,17 @@ int sendGpsToServer()
       url += "&lng=";
       url += longitude;
       url +="&heartrate";
-      url +=heartrate;    //hr function
+      //url +=heartrate;    //hr function
       url +="&accelerometerx";
-      url +=accl; // accl function
+     // url +=accl; // accl function
       url +="&accelerometery";
-      url +=accly; // accl function
+    //  url +=accly; // accl function
      
       url +="&accelerometerz";
-      url +=acclz; // accl function
+     // url +=acclz; // accl function
 
       url +="&heartrate";
-      url +=heartrate;
+      //url +=heartrate;
 
 
 
@@ -131,8 +132,8 @@ int sendGpsToServer()
     sendATcommand("AT+HTTPINIT", "OK", 2000); 
     sendATcommand("AT+HTTPPARA=\"CID\",1", "OK", 1000);
     //Set the HTTP URL sim800.print("AT+HTTPPARA="URL","http://ahmadssd.000webhostapp.com/gpsdata.php?lat=222&lng=222"\r");
-    sim800L.print("AT+HTTPPARA=\"URL\",\"");
-    sim800L.print(url);
+    SIM900A.print("AT+HTTPPARA=\"URL\",\"");
+    SIM900A.print(url);
     sendATcommand("\"", "OK", 1000);
     //Set up the HTTP action
     sendATcommand("AT+HTTPACTION=0", "0,200", 1000);
@@ -156,11 +157,11 @@ int8_t sendATcommand(char* ATcommand, char* expected_answer, unsigned int timeou
     delay(100);
     
     //Clean the input buffer
-    while( sim800L.available() > 0) sim800L.read();
+    while( SIM900A.available() > 0) SIM900A.read();
     
     if (ATcommand[0] != '\0'){
       //Send the AT command 
-      sim800L.println(ATcommand);
+      SIM900A.println(ATcommand);
     }
 
     x = 0;
@@ -169,8 +170,8 @@ int8_t sendATcommand(char* ATcommand, char* expected_answer, unsigned int timeou
     //this loop waits for the answer with time out
     do{
         //if there are data in the UART input buffer, reads it and checks for the asnwer
-        if(sim800L.available() != 0){
-            response[x] = sim800L.read();
+        if(SIM900A.available() != 0){
+            response[x] = SIM900A.read();
             //Serial.print(response[x]);
             x++;
             // check if the desired answer (OK) is in the response of the module
@@ -197,7 +198,7 @@ boolean sendATcommand(String ATcommand, String expected_answer, unsigned int tim
     
   //Clean the input buffer
   while( SIM800.available() > 0) SIM800.read();
-  sim800L.println(ATcommand);
+  SIM900A.println(ATcommand);
   
   //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
   previous = millis();

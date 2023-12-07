@@ -1,8 +1,8 @@
 #include <SoftwareSerial.h>
-SoftwareSerial SIM900A(8,7); // RX | TX
+SoftwareSerial SIM900A(8,7); // RX | TX // done
 // Connect the SIM900A TX to Arduino pin 2 RX. 
 // Connect the SIM900A RX to Arduino pin 3 TX. 
-char c = ' ';
+char c = ' '; // -n
 void setup() 
 {
 // start th serial communication with the host computer
