@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
-#define rxPin 2
-#define txPin 3
+#define rxPin 8
+#define txPin 7
 SoftwareSerial sim800L(rxPin,txPin); 
 
 void setup()

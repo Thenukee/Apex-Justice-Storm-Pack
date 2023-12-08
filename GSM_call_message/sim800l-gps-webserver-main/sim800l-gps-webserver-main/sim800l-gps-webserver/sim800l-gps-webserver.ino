@@ -4,9 +4,11 @@
 
 #define rxPin 2 //sim900a
 #define txPin 3 //sim900a
-SoftwareSerial SIM900A(rxPin,txPin); 
+SoftwareSerial SIM900A(txPin,rxPin); 
+//SoftwareSerial SIM900A(8,7); // RX | TX // done green-7 orange-8
 
-//GPS Module RX pin to Arduino 9
+
+//GPS Module RX pin to Arduino 9 green
 //GPS Module TX pin to Arduino 8    
 AltSoftSerial neogps;
 //here define gps pins
@@ -15,6 +17,36 @@ TinyGPSPlus gps; //initializing the object name gps
 
 unsigned long previousMillis = 0; //setting the 660 seconds interval
 long interval = 60000; 
+
+
+//heart rate
+#include <Wire.h>
+#include "MAX30105.h"
+
+#include "heartRate.h"
+
+MAX30105 particleSensor;
+
+const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
+byte rates[RATE_SIZE]; //Array of heart rates
+byte rateSpot = 0;
+long lastBeat = 0; //Time at which the last beat occurred
+
+float beatsPerMinute ,BPM=0.0 ,AvgBPM=0.0;
+int beatAvg;
+
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <SoftWire.h>
+
+#define SDA_PIN  5 // Define your chosen pin numbers for SDA and SCL
+#define SCL_PIN 4
+
+SoftWire Wire = SoftWire();
+
+Adafruit_MPU6050 mpu;
+
+
 
 
 void setup()
@@ -28,123 +60,100 @@ void setup()
   //Begin serial communication with Arduino and SIM900A
   neogps.begin(9600);
 
+
+
   Serial.println("Initializing...");
   //delay(10000);
 
+  // Initialize heart rate sensor
+if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
+{
+Serial.println("MAX30105 was not found. Please check wiring/power. ");
+while (1);
+}
+//not gonna go in main Serial.println("Place your index finger on the sensor with steady pressure.");
+
+particleSensor.setup(); //Configure sensor with default settings
+particleSensor.setPulseAmplitudeRed(0x0A); //Turn Red LED to low to indicate sensor is running
+particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
+
+
+//heart rate senser done
+
   //Once the handshake test is successful, it will back to OK
+ //Once the handshake test is successful, it will back to OK
   sendATcommand("AT", "OK", 2000);
   sendATcommand("AT+CMGF=1", "OK", 2000);
-  //SIM900A.print("AT+CMGR=40\r");
+  //sim800L.print("AT+CMGR=40\r");
   
+/*
+  sendATcommand("AT+CSTT=\"dialogb\",\"\",\"\"","OK"2000);
+  sendATcommand("AT+SAPBR=3,1,\"Contype\",\"GPRS\"","OK",2000);
+  sendAtcommand("AT+SAPBR=3,1,\"APN\","dialogbb\"","OK",2000);
+  sendAtcommand("AT+SAPBR=1,1,","OK",2000);
+  sendAtcommand("AT+HTTPINIT","OK",2000);
+
+*/
+
+  //gprsSerial.println("AT");
+
+  
+  
+  
+  delay(1000);
+//AT+CFUN=1
+//AT+CGATT=1
+
+//AT+SAPBR=3,1,"APN","internet"
+//AT+SAPBR=1,1
+
+
+  
+
+
+
+  // Try to initialize Accelerometer!
+Wire.begin(SDA_PIN, SCL_PIN); // Initialize SoftWire with chosen pins
+  mpu.setWire(&Wire);
+
+  if (!mpu.begin()) {
+    Serial.println("Failed to find MPU6050 chip");
+    while (1) {
+      delay(1000);
+    }
+  }
+
+  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
+  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
+  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+
+
+delay(1000);
 }
 
 void loop()
 {
+  /*
   while(SIM900A.available()){
     Serial.println(SIM900A.readString());
   }
   while(Serial.available())  {
     SIM900A.println(Serial.readString());
   }
-
+*/
 
 ///60 s interval
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis > interval) {
        previousMillis = currentMillis;
-       sendGpsToServer();//replace with dataToServer
+       heartrate();
+       accel();
+       sendDataToServer();//replace with dataToServer
        //sendDataToServer();
     }
 }
 
-int sendGpsToServer()
-{
-    //Can take up to 60 seconds
-    boolean newData = false;
-    for (unsigned long start = millis(); millis() - start < 2000;){
-      while (neogps.available()){
-        if (gps.encode(neogps.read())){
 
-          // this gps is an oblject created by TinyGPSPlus 
-          newData = true;
-          break;
-        }
-      }
-    }
-  
-    //If newData is true
-    if(true){
-      newData = false;
-      
-      String latitude, longitude;
-      float altitude;
-      unsigned long date, time, speed, satellites;
-  
-      latitude = String(gps.location.lat(), 6); // Latitude in degrees (double)
-      longitude = String(gps.location.lng(), 6); // Longitude in degrees (double)
-      altitude = gps.altitude.meters(); // Altitude in meters (double)
-      date = gps.date.value(); // Raw date in DDMMYY format (u32)
-      time = gps.time.value(); // Raw time in HHMMSSCC format (u32)
-      speed = gps.speed.kmph();
-      
-      Serial.print("Latitude= "); 
-      Serial.print(latitude);
-      Serial.print(" Longitude= "); 
-      Serial.println(longitude);
-  
-      //if (latitude == 0) {return 0;}
-      
-      String url, temp;
-      url = "http://gallant-water-56309.pktriot.net/gpsdata.php?lat=";
-      url += latitude;
-      url += "&lng=";
-      url += longitude;
-      url +="&heartrate";
-      //url +=heartrate;    //hr function
-      url +="&accelerometerx";
-     // url +=accl; // accl function
-      url +="&accelerometery";
-    //  url +=accly; // accl function
-     
-      url +="&accelerometerz";
-     // url +=acclz; // accl function
-
-      url +="&heartrate";
-      //url +=heartrate;
-
-
-
-
-
-      Serial.println(url);    
-      delay(300);
-          
-    sendATcommand("AT+CFUN=1", "OK", 2000);
-    //AT+CGATT = 1 Connect modem is attached to GPRS to a network. AT+CGATT = 0, modem is not attached to GPRS to a network
-    sendATcommand("AT+CGATT=1", "OK", 2000);
-    //Connection type: GPRS - bearer profile 1
-    sendATcommand("AT+SAPBR=3,1,\"Contype\",\"GPRS\"", "OK", 2000);
-    //sets the APN settings for your network provider.
-    sendATcommand("AT+SAPBR=3,1,\"APN\",\"internet\"", "OK", 2000);
-    //enable the GPRS - enable bearer 1
-    sendATcommand("AT+SAPBR=1,1", "OK", 2000);
-    //Init HTTP service
-    sendATcommand("AT+HTTPINIT", "OK", 2000); 
-    sendATcommand("AT+HTTPPARA=\"CID\",1", "OK", 1000);
-    //Set the HTTP URL sim800.print("AT+HTTPPARA="URL","http://ahmadssd.000webhostapp.com/gpsdata.php?lat=222&lng=222"\r");
-    SIM900A.print("AT+HTTPPARA=\"URL\",\"");
-    SIM900A.print(url);
-    sendATcommand("\"", "OK", 1000);
-    //Set up the HTTP action
-    sendATcommand("AT+HTTPACTION=0", "0,200", 1000);
-    //Terminate the HTTP service
-    sendATcommand("AT+HTTPTERM", "OK", 1000);
-    //shuts down the GPRS connection. This returns "SHUT OK".
-    sendATcommand("AT+CIPSHUT", "SHUT OK", 1000);
-
-  }
-  return 1;    
-}
 
 int8_t sendATcommand(char* ATcommand, char* expected_answer, unsigned int timeout){
 
