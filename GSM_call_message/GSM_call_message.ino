@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial SIM900A(8,7); // RX | TX // done green-7 orange-8
+SoftwareSerial SIM900A(3,2); // RX | TX // done green-7 orange-8
 // Connect the SIM900A TX to Arduino pin 2 RX. 
 // Connect the SIM900A RX to Arduino pin 3 TX. 
 char c = ' '; // -n
@@ -69,7 +69,7 @@ void sendMessage()
   SIM900A.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
   delay(1000);
   Serial.println ("Set SMS Number");
-  SIM900A.println("AT+CMGS=\"+94752382969\"\r"); //Mobile phone number to send message//94767196896  772700815  //94752382969
+  SIM900A.println("AT+CMGS=\"+94759319649\"\r"); //Mobile phone number to send message//94767196896  772700815  //94752382969
   delay(1000);
   Serial.println ("Set SMS Content");
   SIM900A.println("This is Apex Justice Storm Pack testing messages: ");// Messsage content
@@ -92,7 +92,7 @@ void sendMessage()
 
   void makeCall() {
  // GSM.print("ATD + "); GSM.print(number); GSM.println(";"); //Call to the specific number, ends with semi-colon,replace X with mobile number
-  SIM900A.println("ATD+94752382969;");//94767196896
+  SIM900A.println("ATD+94759319649;");//94767196896 /0759319649
   Serial.println("Calling  ");
   delay(20000);       // wait for 20 seconds...
   

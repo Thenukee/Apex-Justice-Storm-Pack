@@ -36,7 +36,7 @@ int sendDataToServer()
       //if (latitude == 0) {return 0;}
       
       String url, temp;
-      url = "http://gallant-water-56309.pktriot.net/gpsdata.php?lat=";
+      url = "http://gallant-water-56309.pktriot.net/gphw/gpsdata.php?lat=";
       url += latitude;
       url += "&lng=";
       url += longitude;
@@ -52,9 +52,7 @@ int sendDataToServer()
       url +="&accelerometerz";
      // url +=acclz; // accl function
 
-      url +="&heartrate";
-      //url +=heartrate;
-
+     
 
 
 

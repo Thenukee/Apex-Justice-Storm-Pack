@@ -37,14 +37,10 @@ int beatAvg;
 
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
-#include <SoftWire.h>
-
-#define SDA_PIN  5 // Define your chosen pin numbers for SDA and SCL
-#define SCL_PIN 4
-
-SoftWire Wire = SoftWire();
+#include <Wire.h>
 
 Adafruit_MPU6050 mpu;
+
 
 
 
@@ -66,11 +62,14 @@ void setup()
   //delay(10000);
 
   // Initialize heart rate sensor
+
+  /*
 if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
 {
 Serial.println("MAX30105 was not found. Please check wiring/power. ");
 while (1);
 }
+*/
 //not gonna go in main Serial.println("Place your index finger on the sensor with steady pressure.");
 
 particleSensor.setup(); //Configure sensor with default settings
@@ -96,8 +95,6 @@ particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
 */
 
   //gprsSerial.println("AT");
-
-  
   
   
   delay(1000);
@@ -113,20 +110,21 @@ particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
 
 
   // Try to initialize Accelerometer!
-Wire.begin(SDA_PIN, SCL_PIN); // Initialize SoftWire with chosen pins
-  mpu.setWire(&Wire);
+if (!mpu.begin()) {
+Serial.println("Failed to find MPU6050 chip");
+while (1) {
+delay(1000);
+}
+}
 
-  if (!mpu.begin()) {
-    Serial.println("Failed to find MPU6050 chip");
-    while (1) {
-      delay(1000);
-    }
-  }
+// set accelerometer range to +-8G
+mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
 
-  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
-  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+// set gyro range to +- 500 deg/s
+mpu.setGyroRange(MPU6050_RANGE_500_DEG);
 
+// set filter bandwidth to 21 Hz
+mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
 
 delay(1000);
 }
