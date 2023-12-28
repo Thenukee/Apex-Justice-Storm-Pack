@@ -1,0 +1,249 @@
+ 
+//Prateek
+//www.prateeks.in
+
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+#include <SoftwareSerial.h>
+#include "Talkie.h"
+#include "Vocab_US_Large.h"
+#include "Vocab_Special.h"
+Talkie voice;
+
+# define GSM_RX 10 
+# define GSM_TX 9 
+
+
+int P_E = 8;
+int P_EE = 7; 
+int P_EEE = 4;
+int P_EEEE = 11; 
+
+# define LIGHT1 5
+# define LIGHT2 6
+# define LIGHT3 12
+# define LIGHT4 13
+SoftwareSerial gsm_board(GSM_RX,GSM_TX);
+boolean call_flag=0, relay_flag=0;
+int i=0,j=0,x=-1;
+char n[3];
+void gsm_initilaize();
+void relay(); 
+
+void setup()
+{
+
+lcd.begin(16, 2);
+gsm_board.begin(9600);
+Serial.begin(9600);
+lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  
+pinMode(P_E, OUTPUT); 
+pinMode(P_EE, OUTPUT);
+pinMode(P_EEE, OUTPUT); 
+pinMode(P_EEEE, OUTPUT);
+
+pinMode(LIGHT1,OUTPUT);
+pinMode(LIGHT2,OUTPUT);
+pinMode(LIGHT3,OUTPUT);
+pinMode(LIGHT4,OUTPUT);
+
+digitalWrite(P_E,HIGH);
+digitalWrite(P_EE,HIGH);
+digitalWrite(P_EEE,HIGH);
+digitalWrite(P_EEEE,HIGH);
+
+digitalWrite(LIGHT1,HIGH);delay(1000);
+digitalWrite(LIGHT2,HIGH);delay(1000);
+digitalWrite(LIGHT3,HIGH);delay(1000);
+digitalWrite(LIGHT4,HIGH);delay(1000);
+
+
+lcd.print("IVRS Based Home");
+lcd.setCursor(0,1);
+lcd.print("Automation With");
+delay (2000);
+
+lcd.clear();
+lcd.setCursor(0,0);
+lcd.print("Immediate Voice ");
+lcd.setCursor(0,1);
+lcd.print("& SMS Feedback");
+delay (2000);
+lcd.clear();
+lcd.setCursor(0,0);
+lcd.print("Using Arduino ");
+lcd.setCursor(0,1);
+lcd.print("SIM800L DTMF");
+delay (2000);
+lcd.clear();
+
+gsm_initilaize();
+lcd.clear();
+lcd.setCursor(0,0);
+lcd.print("GSM TEST OK");
+delay (2000);
+lcd.clear();
+lcd.setCursor(0,0);
+lcd.print("CALL TO SIM");
+}
+
+void loop()
+{
+   
+{
+digitalWrite(P_EEEE,LOW);
+digitalWrite(P_EEEE,HIGH);
+}  
+String gsm_data; 
+while(gsm_board.available())
+
+
+{
+char c=gsm_board.read();
+gsm_data+=c;
+delay(10);
+}  
+if(!call_flag) 
+{
+x=gsm_data.indexOf("RING");
+if(x>-1)
+{
+delay(5000);
+gsm_board.println("ATA");
+Serial.println("ATA");
+delay(1000);voice.say(sp2_ONE);voice.say(sp4_LIGHT);voice.say(sp2_ONE);voice.say(sp2_ON);
+delay(1000);voice.say(sp2_TWO);voice.say(sp4_LIGHT);voice.say(sp2_ONE);voice.say(sp2_OFF);
+delay(1000);voice.say(sp2_THREE);voice.say(sp4_LIGHT);voice.say(sp2_TWO);voice.say(sp2_ON);
+delay(1000);voice.say(sp2_FOUR);voice.say(sp4_LIGHT);voice.say(sp2_TWO);voice.say(sp2_OFF);
+delay(1000);voice.say(sp2_FIVE);voice.say(sp4_LIGHT);voice.say(sp2_THREE);voice.say(sp2_ON);
+delay(1000);voice.say(sp2_SIX);voice.say(sp4_LIGHT);voice.say(sp2_THREE);voice.say(sp2_OFF);
+delay(1000);voice.say(sp2_SEVEN);voice.say(sp4_LIGHT);voice.say(sp2_FOUR);voice.say(sp2_ON);
+delay(1000);voice.say(sp2_EIGHT);voice.say(sp4_LIGHT);voice.say(sp2_FOUR);voice.say(sp2_OFF);
+call_flag=1;
+}
+}  
+
+if(call_flag)
+{
+x=gsm_data.indexOf("DTMF"); 
+if(x>-1)
+{
+n[j]=gsm_data[x+6];
+Serial.println(n[j]);
+relay_flag=1;
+}
+x=gsm_data.indexOf("NO CARRIER"); 
+if(x>-1)
+{
+gsm_board.println("ATH");
+relay_flag=1;
+call_flag=0;
+j=0;
+}
+}
+if(relay_flag) 
+{
+relay();
+}
+}
+
+void gsm_initilaize()
+{
+boolean gsm_Ready=1;
+Serial.println("initializing GSM module");
+while(gsm_Ready>0)
+{
+gsm_board.println("AT");
+Serial.println("AT"); 
+while(gsm_board.available())
+{
+if(gsm_board.find("OK")>0)
+gsm_Ready=0;
+}
+delay(2000);
+}
+Serial.println("AT READY");
+
+boolean ntw_Ready=1;
+Serial.println("finding network");
+while(ntw_Ready>0)
+{
+gsm_board.println("AT+CPIN?");
+Serial.println("AT+CPIN?"); 
+while(gsm_board.available())
+{
+if(gsm_board.find("+CPIN: READY")>0)
+ntw_Ready=0;
+}
+delay(2000);
+}
+ Serial.println("NTW READY");
+
+boolean DTMF_Ready=1;
+Serial.println("turning DTMF ON");
+while(DTMF_Ready>0)
+{
+gsm_board.println("AT+DDET=1");
+Serial.println("AT+DDET=1"); 
+while(gsm_board.available())
+{
+if(gsm_board.find("OK")>0)
+DTMF_Ready=0;
+}
+delay(2000);
+}
+Serial.println("DTMF READY");
+}
+
+void relay()
+{
+
+if(n[0]=='1')
+{
+digitalWrite(LIGHT1,LOW);
+digitalWrite(P_E,LOW);
+digitalWrite(P_E,HIGH);
+
+Serial.println("LIGHT1 ON");lcd.clear();lcd.setCursor(0,0);lcd.print("LIGHT1 ON");lcd.clear();
+lcd.setCursor(0,0);lcd.print("PRESS BUTTON");lcd.setCursor(5,1);lcd.print("LIGHT1 ON");
+}
+
+else if(n[0]=='2')
+{
+digitalWrite(LIGHT1,HIGH);
+
+digitalWrite(P_EE,LOW);
+digitalWrite(P_EE,HIGH);
+  
+Serial.println("LIGHT1 OFF");lcd.clear();lcd.setCursor(0,0);lcd.print("LIGHT1 OFF");lcd.clear();
+lcd.setCursor(0,0);lcd.print("PRESS BUTTON");lcd.setCursor(5,1);lcd.print("LIGHT1 OFF");
+}
+
+if(n[0]=='3')
+{
+digitalWrite(LIGHT2,LOW);
+
+digitalWrite(P_EEE,LOW);
+digitalWrite(P_EEE,HIGH);
+  
+Serial.println("LIGHT2 ON");lcd.clear();lcd.setCursor(0,0);lcd.print("LIGHT2 ON");lcd.clear();
+lcd.setCursor(0,0);lcd.print("PRESS BUTTON");lcd.setCursor(5,1);lcd.print("LIGHT2 ON");
+}
+
+else if(n[0]=='4')
+{
+digitalWrite(LIGHT2,HIGH);
+
+digitalWrite(P_EEEE,LOW);
+digitalWrite(P_EEEE,HIGH);
+  
+Serial.println("LIGHT2 OFF");lcd.clear();lcd.setCursor(0,0);lcd.print("LIGHT2 OFF");lcd.clear();
+lcd.setCursor(0,0);lcd.print("PRESS BUTTON");lcd.setCursor(5,1);lcd.print("LIGHT2 OFF");
+}
+relay_flag=0;
+}
+
