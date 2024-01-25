@@ -16,7 +16,7 @@ AltSoftSerial neogps;
 TinyGPSPlus gps; //initializing the object name gps
 
 unsigned long previousMillis = 0; //setting the 660 seconds interval
-long interval = 60000; 
+long interval = 90000; // changed to 1 1/2 min otherwise not enough time for calibration 
 
 
 //heart rate
@@ -63,13 +63,13 @@ void setup()
 
   // Initialize heart rate sensor
 
-  /*
+  ///*
 if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
 {
 Serial.println("MAX30105 was not found. Please check wiring/power. ");
 while (1);
 }
-*/
+//*/
 //not gonna go in main Serial.println("Place your index finger on the sensor with steady pressure.");
 
 particleSensor.setup(); //Configure sensor with default settings
