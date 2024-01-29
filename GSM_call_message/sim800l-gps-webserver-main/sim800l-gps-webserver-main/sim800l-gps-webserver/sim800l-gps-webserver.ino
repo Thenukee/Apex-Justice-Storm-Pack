@@ -48,10 +48,14 @@ Adafruit_MPU6050 mpu;
 void setup()
 {
   //Begin serial communication with Arduino and Arduino IDE (Serial Monitor)
-  Serial.begin(115200);
+  Serial.begin(9600);
   
   //Begin serial communication with Arduino and SIM900A
-  SIM900A.begin(9600);
+  SIM900A.begin(9600); 
+Serial.println("SIM900A started at 9600");
+delay(1000);
+Serial.println("Setup Complete! SIM900A is Ready!");
+
 
   //Begin serial communication with Arduino and SIM900A
   neogps.begin(9600);
@@ -65,7 +69,7 @@ void setup()
 
   // Initialize heart rate sensor
 
-  /* cux of issues in max3010
+  ///* cux of issues in max3010
 if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
 {
 Serial.println("MAX30105 was not found. Please check wiring/power. ");
@@ -150,8 +154,8 @@ void loop()
        previousMillis = currentMillis;
          Serial.println("loop starts");
 
-      //heartrate(BPM ,AvgBPM);
-       heatrate(BPM ,AvgBPM); // cuz heart rate not working
+      heartrate(BPM ,AvgBPM);
+      // heatrate(BPM ,AvgBPM); // cuz heart rate not working
        accel(acclx,accly,acclz);
        sendDataToServer(url,acclx,accly,acclz);//replace with dataToServer
        //sendDataToServer(); in gps.ino
