@@ -14,8 +14,8 @@ accly=a.acceleration.y;
 acclz=a.acceleration.z;
 //debugging only
 acclx="4.1";
-accly="0.1";
-acclz="0.3";
+accly="6.1";
+acclz="7.3";
 
 Serial.print(",");
 Serial.print(a.acceleration.y);

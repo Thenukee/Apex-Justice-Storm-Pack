@@ -2,6 +2,9 @@
 
 void heartrate(float &BPM,float &AvgBPM)
 {
+int i=0;
+//float BPM, avgBPM;
+  while (i<800) { //for accuracy 3000 takes 58 secs
 long irValue = particleSensor.getIR();
 
 if (checkForBeat(irValue) == true)
@@ -25,25 +28,31 @@ beatAvg /= RATE_SIZE;
 }
 }
 
-Serial.print("IR=");
-Serial.print(irValue);
-Serial.print(", BPM=");
-Serial.print(beatsPerMinute);
-Serial.print(", Avg BPM=");
-Serial.print(beatAvg);
+//Serial.print("IR=");
+//Serial.print(irValue);
+//Serial.print(", BPM=");
+//Serial.print(beatsPerMinute);
+//Serial.print(", Avg BPM=");
+//Serial.print(beatAvg);
 
-beatsPerMinute=11; // for debugging
-while (beatsPerMinute < 10){
-  
-Serial.print(" No finger?");
-Serial.println("");
-heartrate(BPM,AvgBPM);
-}
-//BPM=beatsPerMinute;  // going to be sent
-//AvgBPM=beatAvg;
-//debugging only 
-BPM=76.0;  // going to be sent
-AvgBPM=81.0;
+//beatsPerMinute=11; // for debugging
+BPM=beatsPerMinute;  // going to be sent
+AvgBPM=beatAvg;
+
+
+
+//if (irValue < 50000)
+   // Serial.print(" No finger?");
+
+//  Serial.println();
+++i;
+  }
+   Serial.print(" BPM=");
+  Serial.print(BPM);
+  Serial.print(", Avg BPM=");
+  Serial.print(AvgBPM);
+  delay(1000);
+  Serial.print("done");
 
 
 Serial.println();
