@@ -1,12 +1,16 @@
 
 
-void accel() {
+void accel(String &acclx,String &accly,String &acclz) {
 /* Get new sensor events with the readings */
 sensors_event_t a, g, temp;
 mpu.getEvent(&a, &g, &temp);
 
 /* Print out the values */
 Serial.print(a.acceleration.x);
+acclx=a.acceleration.x;
+acclx=a.acceleration.y;
+acclx=a.acceleration.z;
+
 Serial.print(",");
 Serial.print(a.acceleration.y);
 Serial.print(",");

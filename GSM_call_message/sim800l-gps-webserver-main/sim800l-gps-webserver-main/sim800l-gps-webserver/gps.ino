@@ -1,4 +1,4 @@
-int sendDataToServer()
+String sendDataToServer(String &url,String &acclx,String &accly,String &acclz)
 {
     //Can take up to 60 seconds
     boolean newData = false;
@@ -35,7 +35,7 @@ int sendDataToServer()
   
       //if (latitude == 0) {return 0;}
       
-      String url, temp;
+      String  temp;
       url = "http://gallant-water-56309.pktriot.net/gphw/gpsdata.php?lat=";
       url += latitude;
       url += "&lng=";
@@ -45,12 +45,11 @@ int sendDataToServer()
       url +="&avgbpm";
       url +=AvgBPM;
       url +="&accelerometerx";
-     // url +=accl; // accl function
+      url +=acclx; // accl function
       url +="&accelerometery";
-    //  url +=accly; // accl function
-     
+      url +=accly; // accl function
       url +="&accelerometerz";
-     // url +=acclz; // accl function
+      url +=acclz; // accl function
 
      
 
@@ -86,5 +85,5 @@ int sendDataToServer()
     sendATcommand("AT+CIPSHUT", "SHUT OK", 1000);
 
   }
-  return 1;    
+  return url;    
 }

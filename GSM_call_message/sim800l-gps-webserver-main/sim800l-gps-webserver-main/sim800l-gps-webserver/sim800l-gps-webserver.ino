@@ -1,4 +1,4 @@
-#include <TinyGPS++.h>
+#include <TinyGPS++.h>       //demonswapped
 #include <SoftwareSerial.h>
 #include <AltSoftSerial.h>
 
@@ -16,7 +16,7 @@ AltSoftSerial neogps;
 TinyGPSPlus gps; //initializing the object name gps
 
 unsigned long previousMillis = 0; //setting the 660 seconds interval
-long interval = 90000; // changed to 1 1/2 min otherwise not enough time for calibration 
+long interval = 60000; 
 
 
 //heart rate
@@ -59,17 +59,17 @@ void setup()
 
 
   Serial.println("Initializing...");
-  //delay(10000);
+  delay(10000);
 
   // Initialize heart rate sensor
 
-  ///*
+  /* cux of issues in max3010
 if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) //Use default I2C port, 400kHz speed
 {
 Serial.println("MAX30105 was not found. Please check wiring/power. ");
 while (1);
 }
-//*/
+*/
 //not gonna go in main Serial.println("Place your index finger on the sensor with steady pressure.");
 
 particleSensor.setup(); //Configure sensor with default settings
@@ -78,7 +78,7 @@ particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
 
 
 //heart rate senser done
-
+// not going to do a http
   //Once the handshake test is successful, it will back to OK
  //Once the handshake test is successful, it will back to OK
   sendATcommand("AT", "OK", 2000);
@@ -131,7 +131,9 @@ delay(1000);
 
 void loop()
 {
-  /*
+
+  String url ,acclx,accly,acclz;
+  /* 
   while(SIM900A.available()){
     Serial.println(SIM900A.readString());
   }
@@ -144,10 +146,12 @@ void loop()
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis > interval) {
        previousMillis = currentMillis;
-       heartrate();
-       accel();
-       sendDataToServer();//replace with dataToServer
-       //sendDataToServer();
+       //heartrate(); // cuz heart rate not working
+       accel(acclx,accly,acclz);
+       sendDataToServer(url,acclx,accly,acclz);//replace with dataToServer
+       //sendDataToServer(); in gps.ino
+       fullSend(url);
+       
     }
 }
 
