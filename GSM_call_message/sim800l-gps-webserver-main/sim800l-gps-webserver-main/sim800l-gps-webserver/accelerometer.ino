@@ -8,8 +8,14 @@ mpu.getEvent(&a, &g, &temp);
 /* Print out the values */
 Serial.print(a.acceleration.x);
 acclx=a.acceleration.x;
-acclx=a.acceleration.y;
-acclx=a.acceleration.z;
+
+accly=a.acceleration.y;
+
+acclz=a.acceleration.z;
+//debugging only
+acclx="4.1";
+accly="0.1";
+acclz="0.3";
 
 Serial.print(",");
 Serial.print(a.acceleration.y);

@@ -60,6 +60,8 @@ void setup()
 
   Serial.println("Initializing...");
   delay(10000);
+    Serial.println("in done");
+
 
   // Initialize heart rate sensor
 
@@ -71,18 +73,18 @@ while (1);
 }
 */
 //not gonna go in main Serial.println("Place your index finger on the sensor with steady pressure.");
-
+/*debugging 
 particleSensor.setup(); //Configure sensor with default settings
 particleSensor.setPulseAmplitudeRed(0x0A); //Turn Red LED to low to indicate sensor is running
 particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
-
+*/
 
 //heart rate senser done
 // not going to do a http
   //Once the handshake test is successful, it will back to OK
  //Once the handshake test is successful, it will back to OK
-  sendATcommand("AT", "OK", 2000);
-  sendATcommand("AT+CMGF=1", "OK", 2000);
+ // sendATcommand("AT", "OK", 2000);
+ // sendATcommand("AT+CMGF=1", "OK", 2000);
   //sim800L.print("AT+CMGR=40\r");
   
 /*
@@ -107,7 +109,7 @@ particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
 
   
 
-
+/* debugging on
 
   // Try to initialize Accelerometer!
 if (!mpu.begin()) {
@@ -125,13 +127,13 @@ mpu.setGyroRange(MPU6050_RANGE_500_DEG);
 
 // set filter bandwidth to 21 Hz
 mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+*/ //debuggong off
 
 delay(1000);
 }
 
 void loop()
 {
-
   String url ,acclx,accly,acclz;
   /* 
   while(SIM900A.available()){
@@ -146,7 +148,10 @@ void loop()
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis > interval) {
        previousMillis = currentMillis;
-       //heartrate(); // cuz heart rate not working
+         Serial.println("loop starts");
+
+      //heartrate(BPM ,AvgBPM);
+       heatrate(BPM ,AvgBPM); // cuz heart rate not working
        accel(acclx,accly,acclz);
        sendDataToServer(url,acclx,accly,acclz);//replace with dataToServer
        //sendDataToServer(); in gps.ino

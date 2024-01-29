@@ -1,6 +1,6 @@
 
 
-void heartrate()
+void heartrate(float &BPM,float &AvgBPM)
 {
 long irValue = particleSensor.getIR();
 
@@ -32,14 +32,18 @@ Serial.print(beatsPerMinute);
 Serial.print(", Avg BPM=");
 Serial.print(beatAvg);
 
-
+beatsPerMinute=11; // for debugging
 while (beatsPerMinute < 10){
+  
 Serial.print(" No finger?");
 Serial.println("");
-heartrate();
+heartrate(BPM,AvgBPM);
 }
-BPM=beatsPerMinute;  // going to be sent
-AvgBPM=beatAvg;
+//BPM=beatsPerMinute;  // going to be sent
+//AvgBPM=beatAvg;
+//debugging only 
+BPM=76.0;  // going to be sent
+AvgBPM=81.0;
 
 
 Serial.println();

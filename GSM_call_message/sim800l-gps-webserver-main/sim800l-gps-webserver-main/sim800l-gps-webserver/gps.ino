@@ -27,6 +27,10 @@ String sendDataToServer(String &url,String &acclx,String &accly,String &acclz)
       date = gps.date.value(); // Raw date in DDMMYY format (u32)
       time = gps.time.value(); // Raw time in HHMMSSCC format (u32)
       speed = gps.speed.kmph();
+
+       latitude = "latitude"; // Latitude in degrees (double)
+      longitude = "longitude";
+
       
       Serial.print("Latitude= "); 
       Serial.print(latitude);
@@ -40,15 +44,15 @@ String sendDataToServer(String &url,String &acclx,String &accly,String &acclz)
       url += latitude;
       url += "&lng=";
       url += longitude;
-      url +="&bpm";
-      url +=BPM;    //hr function
-      url +="&avgbpm";
-      url +=AvgBPM;
-      url +="&accelerometerx";
+      url +="&bpm=";
+      url +=(String)BPM;    //hr function
+      url +="&avgbpm=";
+      url +=(String)AvgBPM;
+      url +="&accelerometerx=";
       url +=acclx; // accl function
-      url +="&accelerometery";
+      url +="&accelerometery=";
       url +=accly; // accl function
-      url +="&accelerometerz";
+      url +="&accelerometerz=";
       url +=acclz; // accl function
 
      
@@ -59,7 +63,7 @@ String sendDataToServer(String &url,String &acclx,String &accly,String &acclz)
       Serial.println(url);    
       delay(300);
           
-    sendATcommand("AT+CFUN=1", "OK", 2000);
+    /*sendATcommand("AT+CFUN=1", "OK", 2000);
     //AT+CGATT = 1 Connect modem is attached to GPRS to a network. AT+CGATT = 0, modem is not attached to GPRS to a network
     sendATcommand("AT+CGATT=1", "OK", 2000);
     //Connection type: GPRS - bearer profile 1
@@ -83,7 +87,8 @@ String sendDataToServer(String &url,String &acclx,String &accly,String &acclz)
     sendATcommand("AT+HTTPTERM", "OK", 1000);
     //shuts down the GPRS connection. This returns "SHUT OK".
     sendATcommand("AT+CIPSHUT", "SHUT OK", 1000);
-
+*/
   }
+  Serial.println(url);
   return url;    
 }
