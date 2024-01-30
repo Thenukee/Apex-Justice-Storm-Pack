@@ -77,3 +77,16 @@ void testSOS(){
   */
  //}
 //}
+void checkSOS() {
+  // read the state of the pushbutton value:
+  buttonState = digitalRead(buttonPin);
+
+  // check if the pushbutton is pressed. If it is, the buttonState is LOW:
+  if (buttonState == LOW) {
+    // Call the function when the button is pressed
+    call();
+    buttonState=HIGH;
+  } else {
+    // turn LED off:
+  }
+}

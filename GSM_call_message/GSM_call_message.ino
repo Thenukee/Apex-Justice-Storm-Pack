@@ -3,8 +3,17 @@ SoftwareSerial SIM900A(3,2); // RX | TX // done green-7 orange-8
 // Connect the SIM900A TX to Arduino pin 2 RX. 
 // Connect the SIM900A RX to Arduino pin 3 TX. 
 char c = ' '; // -n
+byte sosState = LOW;
+
+
+
+void sos() {
+  if (digitalRead(11) == HIGH) {
+    sosState=HIGH;}
+  }
 void setup() 
 {
+  pinMode(11,OUTPUT);
 // start th serial communication with the host computer
 SIM900A.begin(9600);
 Serial.begin(9600);
@@ -21,7 +30,7 @@ Serial.println("Setup Complete! SIM900A is Ready!");
 void loop()
 {
 
-
+sos();
 
 
 
@@ -33,6 +42,7 @@ void loop()
 SIM900A.write(c); 
 }
 */
+if(sosState==HIGH)   makeCall();
 
 if (Serial.available()>0)
 switch (Serial.read())

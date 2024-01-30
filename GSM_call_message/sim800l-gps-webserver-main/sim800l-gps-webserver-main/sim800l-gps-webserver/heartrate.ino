@@ -4,7 +4,10 @@ void heartrate(float &BPM,float &AvgBPM)
 {
 int i=0;
 //float BPM, avgBPM;
-  while (i<800) { //for accuracy 3000 takes 58 secs
+  while (i<800) { 
+    buttonState = digitalRead(buttonPin);
+    checkSOS();
+    //for accuracy 3000 takes 58 secs
 long irValue = particleSensor.getIR();
 
 if (checkForBeat(irValue) == true)
@@ -25,8 +28,12 @@ beatAvg = 0;
 for (byte x = 0 ; x < RATE_SIZE ; x++)
 beatAvg += rates[x];
 beatAvg /= RATE_SIZE;
+buttonState = digitalRead(buttonPin);
+checkSOS();
 }
 }
+buttonState = digitalRead(buttonPin);
+checkSOS();
 
 //Serial.print("IR=");
 //Serial.print(irValue);
@@ -56,4 +63,6 @@ AvgBPM=beatAvg;
 
 
 Serial.println();
+buttonState = digitalRead(buttonPin);
+checkSOS();
 }

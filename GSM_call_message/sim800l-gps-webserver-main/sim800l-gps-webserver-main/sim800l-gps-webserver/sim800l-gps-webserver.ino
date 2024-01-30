@@ -42,6 +42,10 @@ int beatAvg;
 Adafruit_MPU6050 mpu;
 
 
+const int buttonPin = 11;  // the number of the pushbutton pin
+
+// variables will change:
+int buttonState = 0;  // variable for reading the pushbutton status
 
 
 
@@ -147,14 +151,19 @@ void loop()
     SIM900A.println(Serial.readString());
   }
 */
+buttonState = digitalRead(buttonPin);
+checkSOS();
 
 ///60 s interval
     unsigned long currentMillis = millis();
     if(currentMillis - previousMillis > interval) {
        previousMillis = currentMillis;
          Serial.println("loop starts");
-
+      buttonState = digitalRead(buttonPin);
+      checkSOS();
       heartrate(BPM ,AvgBPM);
+      buttonState = digitalRead(buttonPin);
+      checkSOS();
       // heatrate(BPM ,AvgBPM); // cuz heart rate not working
        accel(acclx,accly,acclz);
        sendDataToServer(url,acclx,accly,acclz);//replace with dataToServer
