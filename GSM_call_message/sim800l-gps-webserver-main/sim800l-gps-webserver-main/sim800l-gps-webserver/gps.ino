@@ -28,8 +28,8 @@ String sendDataToServer(String &url,String &acclx,String &accly,String &acclz)
       time = gps.time.value(); // Raw time in HHMMSSCC format (u32)
       speed = gps.speed.kmph();
 
-       latitude = "54.345"; // Latitude in degrees (double)
-      longitude = "3423.2344";
+     //  latitude = "54.345"; // Latitude in degrees (double)
+    //  longitude = "3423.2344";
 
       
       Serial.print("Latitude= "); 

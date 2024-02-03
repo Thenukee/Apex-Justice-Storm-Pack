@@ -166,9 +166,13 @@ checkSOS();
       checkSOS();
       // heatrate(BPM ,AvgBPM); // cuz heart rate not working
        accel(acclx,accly,acclz);
+       buttonState = digitalRead(buttonPin);
+      checkSOS();
        sendDataToServer(url,acclx,accly,acclz);//replace with dataToServer
        //sendDataToServer(); in gps.ino
        fullSend(url);
+       buttonState = digitalRead(buttonPin);
+      checkSOS();
        
     }
 }

@@ -88,5 +88,7 @@ void checkSOS() {
     buttonState=HIGH;
   } else {
     // turn LED off:
+
   }
+  loop();
 }
